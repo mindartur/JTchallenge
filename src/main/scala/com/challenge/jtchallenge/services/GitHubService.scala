@@ -8,14 +8,33 @@
 
 package com.challenge.jtchallenge.services
 
-import cats.data.{EitherNel, EitherT, NonEmptyList}
-import cats.effect.IO
-import com.challenge.jtchallenge.models.{Organisation, UserName}
+import cats.data.{EitherNel, NonEmptyList}
+import cats.effect.{IO}
+import com.challenge.jtchallenge.config.GithubConfig
+import com.challenge.jtchallenge.dto.GithubOrganisationDto
+import com.challenge.jtchallenge.models.{UserName}
+import cats.implicits._
+import github4s.http.HttpClient
+import github4s.interpreters.StaticAccessToken
+import github4s.{GithubConfig => GConfig}
+import org.http4s.client.Client
 
 trait GitHubService {
-  def getUserOrganisations(userName: UserName): IO[EitherNel[String, List[Organisation]]]
+  def getUserOrganisations(userName: UserName): IO[EitherNel[String, List[GithubOrganisationDto]]]
 }
 
-final class GitHubServiceImpl extends GitHubService {
-  override def getUserOrganisations(userName: UserName): IO[EitherNel[String, List[Organisation]]] = IO(Left(NonEmptyList("something", List())))
+final class GitHubServiceImpl(githubConfig: GithubConfig)(implicit httpClient: Client[IO]) extends GitHubService {
+  val client = new HttpClient[IO](httpClient, GConfig.default, new StaticAccessToken(Some(githubConfig.accessToken.value)))
+
+  override def getUserOrganisations(username: UserName): IO[EitherNel[String, List[GithubOrganisationDto]]] = {
+     client
+       .get[List[GithubOrganisationDto]](s"users/$username/orgs")
+       .map(response =>
+         response.result.bimap(
+           error => NonEmptyList.of(error.getMessage()),
+           identity
+         )
+       )
+  }
 }
+

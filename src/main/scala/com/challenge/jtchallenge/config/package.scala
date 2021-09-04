@@ -21,4 +21,7 @@ package object config {
   type IP = String Refined IPv4
   object IP extends RefinedTypeOps[IP, String] with CatsRefinedTypeOpsSyntax
 
+  type GithubToken = String Refined NonEmpty
+  object GithubToken extends RefinedTypeOps[GithubToken, String] with CatsRefinedTypeOpsSyntax
+
 }

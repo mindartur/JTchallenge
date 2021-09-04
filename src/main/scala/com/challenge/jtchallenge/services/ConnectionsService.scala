@@ -8,10 +8,10 @@
 
 package com.challenge.jtchallenge.services
 
-import cats.data.{EitherT, EitherNel}
+import cats.data.{EitherNel, EitherT}
 import cats.effect.IO
 import cats.syntax.all._
-import com.challenge.jtchallenge.dto.{ConnectedFalseOutputDto, ConnectedOutputDto, ConnectedTrueOutputDto}
+import com.challenge.jtchallenge.dto.{ConnectedFalseOutputDto, ConnectedOutputDto, ConnectedTrueOutputDto, GithubOrganisationDto}
 import com.challenge.jtchallenge.models.{Developer, Organisation}
 
 trait ConnectionsService {
@@ -37,8 +37,10 @@ final class ConnectionsServiceImpl(
   }
 
   def getCommonOrganisations(dev1: Developer, dev2: Developer): IO[EitherNel[String, List[Organisation]]] = {
-    val user1Orgs = EitherT(gitHubService.getUserOrganisations(dev1.userName))
-    val user2Orgs = EitherT(gitHubService.getUserOrganisations(dev2.userName))
+    val toOrganisation = (gOrg: GithubOrganisationDto) => Organisation(gOrg.id)
+
+    val user1Orgs = EitherT(gitHubService.getUserOrganisations(dev1.userName)).map(orgs => orgs.map(toOrganisation))
+    val user2Orgs = EitherT(gitHubService.getUserOrganisations(dev2.userName)).map(orgs => orgs.map(toOrganisation))
     (user1Orgs, user2Orgs).parMapN{ (user1Orgs, user2Orgs) =>
       intersectOrganisations(user1Orgs, user2Orgs)
     }.value

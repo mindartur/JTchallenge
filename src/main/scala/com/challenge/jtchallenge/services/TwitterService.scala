@@ -14,7 +14,6 @@ import com.danielasfregola.twitter4s.TwitterRestClient
 import com.challenge.jtchallenge.models.UserName
 import com.danielasfregola.twitter4s.entities.Relationship
 import com.danielasfregola.twitter4s.exceptions.{Errors, TwitterException}
-import org.http4s.Status.InternalServerError
 
 trait TwitterService {
   def relationshipBetweenUsers(userNameFollowing: UserName, userName: UserName): IO[EitherNel[String, Relationship]]

@@ -8,8 +8,7 @@
 
 package com.challenge.jtchallenge
 
-import java.util.concurrent.{ ExecutorService, Executors }
-
+import java.util.concurrent.{ExecutorService, Executors}
 import cats.effect._
 import cats.implicits._
 import com.typesafe.config._
@@ -17,6 +16,7 @@ import com.challenge.jtchallenge.api._
 import com.challenge.jtchallenge.config._
 import com.challenge.jtchallenge.services.{ConnectionsServiceImpl, GitHubServiceImpl, TwitterServiceImpl}
 import eu.timepit.refined.auto._
+import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.ember.server._
 import org.http4s.implicits._
 import org.http4s.server.Router
@@ -38,15 +38,19 @@ object Server extends IOApp.WithContext {
 
   override def run(args: List[String]): IO[ExitCode] = {
     val blocker  = Blocker.liftExecutorService(blockingPool)
+    val httpClientResource = EmberClientBuilder.default[IO].withBlocker(blocker).build
 
     val program = for {
       config <- IO(ConfigFactory.load(getClass().getClassLoader()))
       serviceConfig <- IO(
         ConfigSource.fromConfig(config).at(ServiceConfig.CONFIG_KEY).loadOrThrow[ServiceConfig]
       )
+      githubConfig <- IO(
+        ConfigSource.fromConfig(config).at(GithubConfig.CONFIG_KEY).loadOrThrow[GithubConfig]
+      )
       helloWorldRoutes = new HelloWorld[IO]
       twitterService <- IO(new TwitterServiceImpl())
-      githubService <- IO(new GitHubServiceImpl())
+      githubService <- httpClientResource.use(httpClient =>  IO(new GitHubServiceImpl(githubConfig)(implicitly(httpClient))))
       connectionsService <- IO(new ConnectionsServiceImpl(twitterService, githubService))
       developersRoutes = new DevelopersRoutes(connectionsService)
       docs             = OpenAPIDocsInterpreter().toOpenAPI(List(HelloWorld.greetings, DevelopersRoutes.connectedRoute), "JTchallenge", "1.0.0")

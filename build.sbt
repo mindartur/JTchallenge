@@ -41,6 +41,7 @@ lazy val jtchallenge =
         library.doobieRefined,
         library.enumeratumCirce,
         library.flywayCore,
+        library.github4s,
         library.http4sCirce,
         library.http4sDsl,
         library.http4sEmberClient,
@@ -86,6 +87,7 @@ lazy val library =
       val doobie          = "0.13.4"
       val enumeratum      = "1.7.0"
       val flyway          = "7.14.1"
+      val github4s        = "0.28.5"
       val http4s          = "0.22.2"
       val logback         = "1.2.5"
       val munit           = "0.7.29"
@@ -109,6 +111,7 @@ lazy val library =
     val doobieScalaTest   = "org.tpolecat"                %% "doobie-scalatest"         % Version.doobie
     val enumeratumCirce   = "com.beachape"                %% "enumeratum-circe"         % Version.enumeratum
     val flywayCore        = "org.flywaydb"                %  "flyway-core"              % Version.flyway
+    val github4s          = "com.47deg"                   %% "github4s"                 % Version.github4s exclude("org.http4s", "http4s-circe_2.13") exclude("org.http4s", "http4s-client_2.13")
     val http4sCirce       = "org.http4s"                  %% "http4s-circe"             % Version.http4s
     val http4sDsl         = "org.http4s"                  %% "http4s-dsl"               % Version.http4s
     val http4sEmberServer = "org.http4s"                  %% "http4s-ember-server"      % Version.http4s
