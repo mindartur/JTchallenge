@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Contributors as noted in the AUTHORS.md file
+ * Copyright (c) 2021 Artur
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,7 +15,7 @@ import cats.implicits._
 import com.typesafe.config._
 import com.challenge.jtchallenge.api._
 import com.challenge.jtchallenge.config._
-import com.challenge.jtchallenge.db.FlywayDatabaseMigrator
+import com.challenge.jtchallenge.services.{ConnectionsServiceImpl, GitHubServiceImpl, TwitterServiceImpl}
 import eu.timepit.refined.auto._
 import org.http4s.ember.server._
 import org.http4s.implicits._
@@ -38,21 +38,20 @@ object Server extends IOApp.WithContext {
 
   override def run(args: List[String]): IO[ExitCode] = {
     val blocker  = Blocker.liftExecutorService(blockingPool)
-    val migrator = new FlywayDatabaseMigrator
 
     val program = for {
       config <- IO(ConfigFactory.load(getClass().getClassLoader()))
-      dbConfig <- IO(
-        ConfigSource.fromConfig(config).at(DatabaseConfig.CONFIG_KEY).loadOrThrow[DatabaseConfig]
-      )
       serviceConfig <- IO(
         ConfigSource.fromConfig(config).at(ServiceConfig.CONFIG_KEY).loadOrThrow[ServiceConfig]
       )
-      _ <- migrator.migrate(dbConfig.url, dbConfig.user, dbConfig.pass)
       helloWorldRoutes = new HelloWorld[IO]
-      docs             = OpenAPIDocsInterpreter().toOpenAPI(List(HelloWorld.greetings), "JTchallenge", "1.0.0")
+      twitterService <- IO(new TwitterServiceImpl())
+      githubService <- IO(new GitHubServiceImpl())
+      connectionsService <- IO(new ConnectionsServiceImpl(twitterService, githubService))
+      developersRoutes = new DevelopersRoutes(connectionsService)
+      docs             = OpenAPIDocsInterpreter().toOpenAPI(List(HelloWorld.greetings, DevelopersRoutes.connectedRoute), "JTchallenge", "1.0.0")
       swagger          = new SwaggerHttp4s(docs.toYaml)
-      routes           = helloWorldRoutes.routes <+> swagger.routes[IO]
+      routes           = helloWorldRoutes.routes <+> developersRoutes.routes <+> swagger.routes[IO]
       httpApp          = Router("/" -> routes).orNotFound
       resource = EmberServerBuilder
         .default[IO]

@@ -28,6 +28,7 @@ lazy val jtchallenge =
       IntegrationTest / parallelExecution := false
     )
     .settings(
+      resolvers += Resolver.sonatypeRepo("releases"),
       libraryDependencies ++= Seq(
         library.catsCore,
         library.circeCore,
@@ -59,6 +60,7 @@ lazy val jtchallenge =
         library.tapirOpenApiYaml,
         library.tapirRefined,
         library.tapirSwaggerUi,
+        library.twitter4s,
         library.munit             % IntegrationTest,
         library.munitCatsEffect   % IntegrationTest,
         library.munitScalaCheck   % IntegrationTest,
@@ -93,6 +95,7 @@ lazy val library =
       val refined         = "0.9.27"
       val scalaCheck      = "1.15.4"
       val tapir           = "0.18.3"
+      val twitter4s       = "7.0"
     }
     val catsCore          = "org.typelevel"               %% "cats-core"                % Version.cats
     val circeCore         = "io.circe"                    %% "circe-core"               % Version.circe
@@ -130,6 +133,7 @@ lazy val library =
     val tapirOpenApiYaml  = "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe-yaml" % Version.tapir
     val tapirRefined      = "com.softwaremill.sttp.tapir" %% "tapir-refined"            % Version.tapir
     val tapirSwaggerUi    = "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-http4s"  % Version.tapir
+    val twitter4s         = "com.danielasfregola"         %% "twitter4s"                % Version.twitter4s
   }
 
 // *****************************************************************************

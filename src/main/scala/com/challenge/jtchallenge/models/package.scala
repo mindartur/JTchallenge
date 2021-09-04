@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Contributors as noted in the AUTHORS.md file
+ * Copyright (c) 2021 Artur
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,7 +12,14 @@ import eu.timepit.refined.api._
 import eu.timepit.refined.cats._
 import eu.timepit.refined.collection._
 
+
 package object models {
+
+  type OrganisationName = String Refined NonEmpty
+  object OrganisationName extends RefinedTypeOps[OrganisationName, String] with CatsRefinedTypeOpsSyntax
+
+  type UserName = String Refined NonEmpty
+  object UserName extends RefinedTypeOps[UserName, String] with CatsRefinedTypeOpsSyntax
 
   type GreetingTitle = String Refined NonEmpty
   object GreetingTitle extends RefinedTypeOps[GreetingTitle, String] with CatsRefinedTypeOpsSyntax
