@@ -27,7 +27,7 @@ final class ConnectionsServiceImpl(
     val commonOrganisationsE = EitherT(getCommonOrganisations(dev1, dev2))
     (areFollowingEachOtherE, commonOrganisationsE).parMapN { (areFollowingEachOther, commonOrganisations) =>
       getConnectedOutput(areFollowingEachOther, commonOrganisations)
-    }.value
+    }(EitherT.accumulatingParallel).value
   }
 
   def areFollowingEachOther(dev1: Developer, dev2: Developer): IO[EitherNel[String, Boolean]] = {

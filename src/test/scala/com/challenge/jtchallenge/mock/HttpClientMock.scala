@@ -20,4 +20,8 @@ object HttpClientMock {
       body = Stream.emits(Encoder[A](implicitly)(result).toString().getBytes("UTF-8"))
     )))
   }
+
+  def withInternalError(error: String): Client[IO] = Client.apply[IO] { _ =>
+    Resource.eval(IO.raiseError(new Exception(error)))
+  }
 }

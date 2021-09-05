@@ -31,4 +31,8 @@ object TwitterServiceMock {
       )
     )))
   }
+
+  def withInternalError(error: String): TwitterService = {
+    (_: UserName, _: UserName) => IO.raiseError(new Exception(error))
+  }
 }
