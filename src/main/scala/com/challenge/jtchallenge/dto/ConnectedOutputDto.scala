@@ -36,8 +36,8 @@ object ConnectedOutputDto {
 
   implicit val decoder: Decoder[ConnectedOutputDto] =
     List[Decoder[ConnectedOutputDto]](
-      Decoder[ConnectedFalseOutputDto].widen,
       Decoder[ConnectedTrueOutputDto].widen,
+      Decoder[ConnectedFalseOutputDto].widen,
     ).reduceLeft(_ or _)
 
 }

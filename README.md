@@ -31,5 +31,15 @@ Be aware that the integration tests might need a working database.
 Run GET request on this URL in order to get positive result:
 ```http://127.0.0.1:8080/developers/connected/ghostdogpr/jdegoes/```
 
+Expected JSON:
+```json
+{
+  "connected": true,
+  "organisations": [
+    "zio"
+  ]
+}
+```
+
 ## Deployment guide ##
 

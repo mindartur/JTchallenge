@@ -46,14 +46,13 @@ object Server extends IOApp {
       githubConfig <- IO(
         ConfigSource.fromConfig(config).at(GithubConfig.CONFIG_KEY).loadOrThrow[GithubConfig]
       )
-      helloWorldRoutes = new HelloWorld[IO]
       twitterService <- IO(new TwitterServiceImpl())
       githubService <- httpClientResource.use((httpClient: Client[IO]) =>  IO(new GitHubServiceImpl(githubConfig)(implicitly(httpClient))))
       connectionsService <- IO(new ConnectionsServiceImpl(twitterService, githubService))
       developersRoutes = new DevelopersRoutes(connectionsService)
-      docs             = OpenAPIDocsInterpreter().toOpenAPI(List(HelloWorld.greetings, DevelopersRoutes.connectedRoute), "JTchallenge", "1.0.0")
+      docs             = OpenAPIDocsInterpreter().toOpenAPI(List(DevelopersRoutes.connectedRoute), "JTchallenge", "1.0.0")
       swagger          = new SwaggerHttp4s(docs.toYaml)
-      routes           = helloWorldRoutes.routes <+> developersRoutes.routes <+> swagger.routes[IO]
+      routes           = developersRoutes.routes <+> swagger.routes[IO]
       httpApp          = Router("/" -> routes).orNotFound
       resource = EmberServerBuilder
         .default[IO]

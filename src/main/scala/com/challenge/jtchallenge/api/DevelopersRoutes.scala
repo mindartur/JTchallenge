@@ -35,7 +35,7 @@ final class DevelopersRoutes(connectionsService: ConnectionsService)
     connectionsService
       .areConnected(dev1,dev2)
       .map(either =>
-        either.bimap(errors => {println(errors); ErrorsOutputDto(errors.map(x => ServiceError.unsafeFrom(x)).toList)}, x => x)
+        either.bimap(errors => {ErrorsOutputDto(errors.map(x => ServiceError.unsafeFrom(x)).toList)}, x => x)
       )
   }
 
