@@ -24,7 +24,7 @@ import sttp.tapir.codec.refined._
 import sttp.tapir.json.circe._
 import sttp.tapir.server.http4s._
 
-final class HelloWorld[F[_]: Concurrent: ContextShift: Timer] extends Http4sDsl[F] {
+final class HelloWorld[F[_]: Concurrent: Async] extends Http4sDsl[F] {
   final val message: NonEmptyString = "This is a fancy message directly from http4s! :-)"
 
   implicit def decodeGreetings: EntityDecoder[F, Greetings] = jsonOf

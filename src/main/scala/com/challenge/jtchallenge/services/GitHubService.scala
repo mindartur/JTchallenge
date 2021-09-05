@@ -9,14 +9,14 @@
 package com.challenge.jtchallenge.services
 
 import cats.data.{EitherNel, NonEmptyList}
-import cats.effect.{IO}
+import cats.effect.IO
 import com.challenge.jtchallenge.config.GithubConfig
 import com.challenge.jtchallenge.dto.GithubOrganisationDto
-import com.challenge.jtchallenge.models.{UserName}
+import com.challenge.jtchallenge.models.UserName
 import cats.implicits._
 import github4s.http.HttpClient
 import github4s.interpreters.StaticAccessToken
-import github4s.{GithubConfig => GConfig}
+import github4s.{GHResponse, GithubConfig => GConfig}
 import org.http4s.client.Client
 
 trait GitHubService {
@@ -29,7 +29,7 @@ final class GitHubServiceImpl(githubConfig: GithubConfig)(implicit httpClient: C
   override def getUserOrganisations(username: UserName): IO[EitherNel[String, List[GithubOrganisationDto]]] = {
      client
        .get[List[GithubOrganisationDto]](s"users/$username/orgs")
-       .map(response =>
+       .map((response: GHResponse[List[GithubOrganisationDto]]) =>
          response.result.bimap(
            error => NonEmptyList.of(error.getMessage()),
            identity

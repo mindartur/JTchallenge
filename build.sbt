@@ -35,10 +35,6 @@ lazy val jtchallenge =
         library.circeGeneric,
         library.circeRefined,
         library.circeParser,
-        library.doobieCore,
-        library.doobieHikari,
-        library.doobiePostgres,
-        library.doobieRefined,
         library.enumeratumCirce,
         library.flywayCore,
         library.github4s,
@@ -84,11 +80,10 @@ lazy val library =
     object Version {
       val cats            = "2.6.1"
       val circe           = "0.14.1"
-      val doobie          = "0.13.4"
       val enumeratum      = "1.7.0"
       val flyway          = "7.14.1"
-      val github4s        = "0.28.5"
-      val http4s          = "0.22.2"
+      val github4s        = "0.29.1"
+      val http4s          = "0.23.0"
       val logback         = "1.2.5"
       val munit           = "0.7.29"
       val munitCatsEffect = "1.0.5"
@@ -96,7 +91,8 @@ lazy val library =
       val pureConfig      = "0.16.0"
       val refined         = "0.9.27"
       val scalaCheck      = "1.15.4"
-      val tapir           = "0.18.3"
+      val tapirOther      = "0.18.3"
+      val tapir           = "0.19.0-M4"
       val twitter4s       = "7.0"
     }
     val catsCore          = "org.typelevel"               %% "cats-core"                % Version.cats
@@ -104,14 +100,9 @@ lazy val library =
     val circeGeneric      = "io.circe"                    %% "circe-generic"            % Version.circe
     val circeRefined      = "io.circe"                    %% "circe-refined"            % Version.circe
     val circeParser       = "io.circe"                    %% "circe-parser"             % Version.circe
-    val doobieCore        = "org.tpolecat"                %% "doobie-core"              % Version.doobie
-    val doobieHikari      = "org.tpolecat"                %% "doobie-hikari"            % Version.doobie
-    val doobiePostgres    = "org.tpolecat"                %% "doobie-postgres"          % Version.doobie
-    val doobieRefined     = "org.tpolecat"                %% "doobie-refined"           % Version.doobie
-    val doobieScalaTest   = "org.tpolecat"                %% "doobie-scalatest"         % Version.doobie
     val enumeratumCirce   = "com.beachape"                %% "enumeratum-circe"         % Version.enumeratum
     val flywayCore        = "org.flywaydb"                %  "flyway-core"              % Version.flyway
-    val github4s          = "com.47deg"                   %% "github4s"                 % Version.github4s exclude("org.http4s", "http4s-circe_2.13") exclude("org.http4s", "http4s-client_2.13")
+    val github4s          = "com.47deg"                   %% "github4s"                 % Version.github4s // exclude("org.http4s", "http4s-circe_2.13") exclude("org.http4s", "http4s-client_2.13")
     val http4sCirce       = "org.http4s"                  %% "http4s-circe"             % Version.http4s
     val http4sDsl         = "org.http4s"                  %% "http4s-dsl"               % Version.http4s
     val http4sEmberServer = "org.http4s"                  %% "http4s-ember-server"      % Version.http4s

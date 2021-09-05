@@ -27,5 +27,9 @@ Tests are included in the project. You can run them via the appropriate sbt task
 `test` and `IntegrationTest/test`. The latter will execute the integration tests.
 Be aware that the integration tests might need a working database.
 
+#### Manual test
+Run GET request on this URL in order to get positive result:
+```http://127.0.0.1:8080/developers/connected/ghostdogpr/jdegoes/```
+
 ## Deployment guide ##
 

@@ -8,7 +8,8 @@
 
 package com.challenge.jtchallenge.api
 
-import cats.effect.{Concurrent, ContextShift, IO, Timer}
+import cats.effect.kernel.Async
+import cats.effect.{Concurrent, IO}
 import cats.implicits._
 import com.challenge.jtchallenge.dto.{ConnectedInputDto, ConnectedOutputDto, ConnectedTrueOutputDto, ErrorsOutputDto, ServiceError}
 import com.challenge.jtchallenge.models.Developer
@@ -26,7 +27,7 @@ import sttp.tapir.json.circe._
 import sttp.tapir.generic.auto._
 
 final class DevelopersRoutes(connectionsService: ConnectionsService)
-                            (implicit conc: Concurrent[IO], cs: ContextShift[IO], timer: Timer[IO])
+                            (implicit conc: Concurrent[IO], async: Async[IO])
   extends Http4sDsl[IO] {
 
   val routes: HttpRoutes[IO] = Http4sServerInterpreter[IO].toRoutes(DevelopersRoutes.connectedRoute) { connectedInputDto =>

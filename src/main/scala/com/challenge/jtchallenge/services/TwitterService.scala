@@ -9,7 +9,7 @@
 package com.challenge.jtchallenge.services
 
 import cats.data.{EitherNel, EitherT, NonEmptyList}
-import cats.effect.{ContextShift, IO}
+import cats.effect.IO
 import com.danielasfregola.twitter4s.TwitterRestClient
 import com.challenge.jtchallenge.models.UserName
 import com.danielasfregola.twitter4s.entities.Relationship
@@ -19,7 +19,7 @@ trait TwitterService {
   def relationshipBetweenUsers(userNameFollowing: UserName, userName: UserName): IO[EitherNel[String, Relationship]]
 }
 
-final class TwitterServiceImpl (implicit cs: ContextShift[IO]) extends TwitterService {
+final class TwitterServiceImpl() extends TwitterService {
   val restClient: TwitterRestClient = TwitterRestClient()
 
   override def relationshipBetweenUsers(userNameFollowing: UserName, userName: UserName): IO[EitherNel[String, Relationship]] = {

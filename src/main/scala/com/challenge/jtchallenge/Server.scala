@@ -16,6 +16,8 @@ import com.challenge.jtchallenge.api._
 import com.challenge.jtchallenge.config._
 import com.challenge.jtchallenge.services.{ConnectionsServiceImpl, GitHubServiceImpl, TwitterServiceImpl}
 import eu.timepit.refined.auto._
+import com.comcast.ip4s.{Host, Port}
+import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.ember.server._
 import org.http4s.implicits._
@@ -26,19 +28,15 @@ import sttp.tapir.docs.openapi._
 import sttp.tapir.openapi.circe.yaml._
 import sttp.tapir.swagger.http4s.SwaggerHttp4s
 
-import scala.concurrent.ExecutionContext
 
-object Server extends IOApp.WithContext {
+object Server extends IOApp {
   val blockingPool: ExecutorService = Executors.newFixedThreadPool(2)
-  val ec: ExecutionContext          = ExecutionContext.global
+//  implicit val runtime1 = cats.effect.unsafe.IORuntime.global
 
   val log = LoggerFactory.getLogger(Server.getClass())
 
-  override protected def executionContextResource: Resource[SyncIO, ExecutionContext] = Resource.eval(SyncIO(ec))
-
   override def run(args: List[String]): IO[ExitCode] = {
-    val blocker  = Blocker.liftExecutorService(blockingPool)
-    val httpClientResource = EmberClientBuilder.default[IO].withBlocker(blocker).build
+    val httpClientResource = EmberClientBuilder.default[IO].build
 
     val program = for {
       config <- IO(ConfigFactory.load(getClass().getClassLoader()))
@@ -50,7 +48,7 @@ object Server extends IOApp.WithContext {
       )
       helloWorldRoutes = new HelloWorld[IO]
       twitterService <- IO(new TwitterServiceImpl())
-      githubService <- httpClientResource.use(httpClient =>  IO(new GitHubServiceImpl(githubConfig)(implicitly(httpClient))))
+      githubService <- httpClientResource.use((httpClient: Client[IO]) =>  IO(new GitHubServiceImpl(githubConfig)(implicitly(httpClient))))
       connectionsService <- IO(new ConnectionsServiceImpl(twitterService, githubService))
       developersRoutes = new DevelopersRoutes(connectionsService)
       docs             = OpenAPIDocsInterpreter().toOpenAPI(List(HelloWorld.greetings, DevelopersRoutes.connectedRoute), "JTchallenge", "1.0.0")
@@ -59,16 +57,15 @@ object Server extends IOApp.WithContext {
       httpApp          = Router("/" -> routes).orNotFound
       resource = EmberServerBuilder
         .default[IO]
-        .withBlocker(blocker)
-        .withHost(serviceConfig.ip)
-        .withPort(serviceConfig.port)
+        .withHost(Host.fromString(serviceConfig.ip).get)
+        .withPort(Port.fromInt(serviceConfig.port).get)
         .withHttpApp(httpApp)
         .build
       fiber = resource.use(server =>
         IO.delay(log.info("Server started at {}", server.address)) >> IO.never.as(ExitCode.Success)
       )
     } yield fiber
-    program.attempt.unsafeRunSync() match {
+    program.attempt.unsafeRunSync()(implicitly(runtime)) match {
       case Left(e) =>
         IO {
           log.error("An error occured during execution!", e)

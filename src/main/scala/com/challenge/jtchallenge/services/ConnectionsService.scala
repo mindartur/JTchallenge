@@ -37,7 +37,7 @@ final class ConnectionsServiceImpl(
   }
 
   def getCommonOrganisations(dev1: Developer, dev2: Developer): IO[EitherNel[String, List[Organisation]]] = {
-    val toOrganisation = (gOrg: GithubOrganisationDto) => Organisation(gOrg.id)
+    val toOrganisation = (gOrg: GithubOrganisationDto) => Organisation(gOrg.login)
 
     val user1Orgs = EitherT(gitHubService.getUserOrganisations(dev1.userName)).map(orgs => orgs.map(toOrganisation))
     val user2Orgs = EitherT(gitHubService.getUserOrganisations(dev2.userName)).map(orgs => orgs.map(toOrganisation))
@@ -48,9 +48,9 @@ final class ConnectionsServiceImpl(
 
   private def getConnectedOutput(areFollowingEachOther: Boolean, commonOrganisations: List[Organisation]): ConnectedOutputDto = {
     if (areFollowingEachOther && commonOrganisations.nonEmpty)
-      ConnectedFalseOutputDto()
-    else
       ConnectedTrueOutputDto(commonOrganisations.map(_.name))
+    else
+      ConnectedFalseOutputDto()
   }
 
   private def intersectOrganisations(orgs1: List[Organisation], orgs2: List[Organisation]): List[Organisation] = {
