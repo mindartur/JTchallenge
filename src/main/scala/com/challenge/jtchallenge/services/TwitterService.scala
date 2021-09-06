@@ -13,7 +13,7 @@ import cats.effect.IO
 import com.danielasfregola.twitter4s.TwitterRestClient
 import com.challenge.jtchallenge.models.UserName
 import com.danielasfregola.twitter4s.entities.Relationship
-import com.danielasfregola.twitter4s.exceptions.{Errors, TwitterException}
+import com.danielasfregola.twitter4s.exceptions.{Errors, TwitterError, TwitterException}
 
 trait TwitterService {
   def relationshipBetweenUsers(userNameFollowing: UserName, userName: UserName): IO[EitherNel[String, Relationship]]
@@ -31,7 +31,7 @@ final class TwitterServiceImpl() extends TwitterService {
       .handleErrorWith {
         case TwitterException(_, errors) => errors.errors match {
           case Seq() => throw new Exception("TwitterService failed but doesn't have any error information")
-          case head :: tail => IO.pure(Left(NonEmptyList(head, tail).map(_.message)))
+          case head :: tail => IO.pure(Left(NonEmptyList(head, tail).map((exception: TwitterError) => s"Twitter API returned error: ${exception.toString()}")))
         }
       }
   }

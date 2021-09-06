@@ -14,9 +14,10 @@ import com.challenge.jtchallenge.config.GithubConfig
 import com.challenge.jtchallenge.dto.GithubOrganisationDto
 import com.challenge.jtchallenge.models.UserName
 import cats.implicits._
+import github4s.GHError.NotFoundError
 import github4s.http.HttpClient
 import github4s.interpreters.StaticAccessToken
-import github4s.{GHResponse, GithubConfig => GConfig}
+import github4s.{GHError, GHResponse, GithubConfig => GConfig}
 import org.http4s.client.Client
 
 trait GitHubService {
@@ -31,7 +32,10 @@ final class GitHubServiceImpl(githubConfig: GithubConfig)(implicit httpClient: C
        .get[List[GithubOrganisationDto]](s"users/$username/orgs")
        .map((response: GHResponse[List[GithubOrganisationDto]]) =>
          response.result.bimap(
-           error => NonEmptyList.of(error.getMessage()),
+           {
+             case _: NotFoundError => NonEmptyList.of(s"${username} is no a valid user in github")
+             case error => NonEmptyList.of(s"Github API returned error: ${error.getMessage()}")
+           },
            identity
          )
        )
