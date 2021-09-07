@@ -1,6 +1,17 @@
 # JTchallenge #
 
-TODO
+API rest which will return whether two “developers” are fully connected or not. 
+
+Given a pair of developer handles they are considered connected if:
+1) They follow each other on Twitter.
+2) They have at least a Github organization in common.
+
+## TODO:
+To improve:
+1) Improve test coverage: add unit tests for services (ConnectionService, GitHubService, TwitterService).
+2) Improve error handling on the side of GitHubService and TwitterService. 
+3) Maybe add identifiers validation for the Twitter and GitHub.
+4) Add local cache for GitHubService and TwitterService.
 
 ## License ##
 
@@ -10,7 +21,7 @@ This code is licensed under the Mozilla Public License Version 2.0, see the
 ## System requirements ##
 
 - Java 11
-- PostgreSQL 11 (or higher)
+- sbt
 
 ## Developer guide ##
 
@@ -25,7 +36,7 @@ sbt task provided by the sbt-revolver plugin.
 
 Tests are included in the project. You can run them via the appropriate sbt tasks
 `test` and `IntegrationTest/test`. The latter will execute the integration tests.
-Be aware that the integration tests might need a working database.
+
 
 #### Manual test
 Run GET request on this URL in order to get positive result:
