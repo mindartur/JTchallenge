@@ -20,6 +20,11 @@ import scala.concurrent.duration._
 
 
 trait TwitterService {
+  /**
+    * @param userNameFollowing - user #1 identifier in Twitter
+    * @param userName - user #2 identifier in Twitter
+    * @return a relationship object of these 2 users or list of errors if there are errors return from Twitter API
+    */
   def relationshipBetweenUsers(userNameFollowing: UserName, userName: UserName): IO[EitherNel[String, Relationship]]
 }
 

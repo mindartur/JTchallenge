@@ -11,7 +11,6 @@ To improve:
 * Improve test coverage: add unit tests for services (ConnectionService, GitHubService, TwitterService).
 * Improve error handling on the side of GitHubService and TwitterService. 
 * Maybe add identifiers validation for the Twitter and GitHub.
-* Add local cache for GitHubService and TwitterService.
 * Improve Dockerfile OR use sbt-native-plugin to create and publish docker image OR use sbt-assembly to create a binary
 * Add datadog tracing
 * Handle compile warnings
@@ -32,7 +31,7 @@ docker run --env-file .env -p 8080:8080 --network host jt-challenge:latest
 ## Swagger
 Assess Swagger docs by `http://127.0.0.1:8080/docs/index.html?url=/docs/docs.yaml`.
 
-(For some reason redirect for `http://127.0.0.1:8080/docs` doesn't always work in Firefox)
+(For some reason redirect to `http://127.0.0.1:8080/docs` doesn't always work in Firefox)
 
 ## System requirements ##
 

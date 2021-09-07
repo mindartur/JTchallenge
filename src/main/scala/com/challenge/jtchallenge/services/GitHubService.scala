@@ -26,6 +26,10 @@ import cats.implicits._
 
 
 trait GitHubService {
+  /**
+    * @param userName - user identifier in GitHub
+    * @return user's organisations or list of errors in case there are errors returned from Github API
+    */
   def getUserOrganisations(userName: UserName): IO[EitherNel[String, List[GithubOrganisationDto]]]
 }
 
