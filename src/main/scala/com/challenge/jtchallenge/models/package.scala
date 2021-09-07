@@ -12,7 +12,6 @@ import eu.timepit.refined.api._
 import eu.timepit.refined.cats._
 import eu.timepit.refined.collection._
 
-
 package object models {
 
   type OrganisationName = String Refined NonEmpty

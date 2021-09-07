@@ -14,6 +14,7 @@ To improve:
 4) Add local cache for GitHubService and TwitterService.
 5) Improve Dockerfile OR use sbt-native-plugin to create and publish docker image OR use sbt-assembly to create a binary
 6) Add datadog tracing
+7) Handle compile warnings
 
 ## Running the service locally
 1) Create an `.env` file using the `.env.template`

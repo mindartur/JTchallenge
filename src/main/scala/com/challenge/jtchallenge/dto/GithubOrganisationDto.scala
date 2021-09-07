@@ -9,13 +9,13 @@
 package com.challenge.jtchallenge.dto
 
 import com.challenge.jtchallenge.models.OrganisationName
-import io.circe.{Decoder, Encoder, HCursor}
-import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
+import io.circe.{ Decoder, Encoder, HCursor }
+import io.circe.generic.semiauto.{ deriveDecoder, deriveEncoder }
 import io.circe.refined._
 
-final case class GithubOrganisationDto (
-   login: OrganisationName,
-   id: Int
+final case class GithubOrganisationDto(
+    login: OrganisationName,
+    id: Int
 )
 object GithubOrganisationDto {
   implicit val decoder: Decoder[GithubOrganisationDto] = deriveDecoder[GithubOrganisationDto]

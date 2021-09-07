@@ -8,8 +8,8 @@
 
 package com.challenge.jtchallenge
 
-import eu.timepit.refined.api.{Refined, RefinedTypeOps}
-import eu.timepit.refined.cats.{CatsRefinedTypeOpsSyntax}
+import eu.timepit.refined.api.{ Refined, RefinedTypeOps }
+import eu.timepit.refined.cats.{ CatsRefinedTypeOpsSyntax }
 import eu.timepit.refined.collection.NonEmpty
 
 package object dto {

@@ -11,10 +11,9 @@ package com.challenge.jtchallenge.dto
 import com.challenge.jtchallenge.models.UserName
 import sttp.tapir.EndpointIO.annotations.path
 
-
 case class ConnectedInputDto(
-   @path
-   dev1: UserName,
-   @path
-   dev2: UserName,
- )
+    @path
+    dev1: UserName,
+    @path
+    dev2: UserName
+)

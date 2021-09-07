@@ -8,15 +8,15 @@
 
 package com.challenge.jtchallenge
 
-import java.util.concurrent.{ExecutorService, Executors}
+import java.util.concurrent.{ ExecutorService, Executors }
 import cats.effect._
 import cats.implicits._
 import com.typesafe.config._
 import com.challenge.jtchallenge.api._
 import com.challenge.jtchallenge.config._
-import com.challenge.jtchallenge.services.{ConnectionsServiceImpl, GitHubServiceImpl, TwitterServiceImpl}
+import com.challenge.jtchallenge.services.{ ConnectionsServiceImpl, GitHubServiceImpl, TwitterServiceImpl }
 import eu.timepit.refined.auto._
-import com.comcast.ip4s.{Host, Port}
+import com.comcast.ip4s.{ Host, Port }
 import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.ember.server._
@@ -27,7 +27,6 @@ import pureconfig._
 import sttp.tapir.docs.openapi._
 import sttp.tapir.openapi.circe.yaml._
 import sttp.tapir.swagger.http4s.SwaggerHttp4s
-
 
 object Server extends IOApp {
   val blockingPool: ExecutorService = Executors.newFixedThreadPool(2)
@@ -47,7 +46,9 @@ object Server extends IOApp {
         ConfigSource.fromConfig(config).at(GithubConfig.CONFIG_KEY).loadOrThrow[GithubConfig]
       )
       twitterService <- IO(new TwitterServiceImpl())
-      githubService <- httpClientResource.use((httpClient: Client[IO]) =>  IO(new GitHubServiceImpl(githubConfig)(implicitly(httpClient))))
+      githubService <- httpClientResource.use((httpClient: Client[IO]) =>
+        IO(new GitHubServiceImpl(githubConfig)(implicitly(httpClient)))
+      )
       connectionsService <- IO(new ConnectionsServiceImpl(twitterService, githubService))
       developersRoutes = new DevelopersRoutes(connectionsService)
       docs             = OpenAPIDocsInterpreter().toOpenAPI(List(DevelopersRoutes.connectedRoute), "JTchallenge", "1.0.0")

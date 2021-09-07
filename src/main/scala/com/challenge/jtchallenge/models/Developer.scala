@@ -9,5 +9,5 @@
 package com.challenge.jtchallenge.models
 
 final case class Developer(
-                          userName: UserName
-                          )
+    userName: UserName
+)

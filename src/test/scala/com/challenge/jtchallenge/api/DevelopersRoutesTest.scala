@@ -1,10 +1,24 @@
+/*
+ * Copyright (c) 2021 Artur
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 package com.challenge.jtchallenge.api
 
 import cats.effect.IO
-import com.challenge.jtchallenge.dto.{ConnectedFalseOutputDto, ConnectedOutputDto, ConnectedTrueOutputDto, ErrorsOutputDto, GithubOrganisationDto}
-import com.challenge.jtchallenge.mock.{ConnectionsServiceMock, HttpClientMock, TwitterServiceMock}
+import com.challenge.jtchallenge.dto.{
+  ConnectedFalseOutputDto,
+  ConnectedOutputDto,
+  ConnectedTrueOutputDto,
+  ErrorsOutputDto,
+  GithubOrganisationDto
+}
+import com.challenge.jtchallenge.mock.{ ConnectionsServiceMock, HttpClientMock, TwitterServiceMock }
 import com.challenge.jtchallenge.services.ConnectionsService
-import org.http4s.{HttpRoutes, Method, Request, Status, Uri}
+import org.http4s.{ HttpRoutes, Method, Request, Status, Uri }
 import org.http4s.server.Router
 import munit._
 import org.http4s.implicits._
@@ -13,7 +27,7 @@ import eu.timepit.refined.auto._
 import io.circe.Decoder
 import io.circe.parser.decode
 
-class DevelopersRoutesTest  extends CatsEffectSuite {
+class DevelopersRoutesTest extends CatsEffectSuite {
   test("when one dev parameter is missing") {
     val expectedStatusCode = Status.NotFound
     val connectionsService = ConnectionsServiceMock.get(
@@ -75,7 +89,7 @@ class DevelopersRoutesTest  extends CatsEffectSuite {
   test("when github API returns errors") {
     testDevelopersRoutesResponse(
       Status.BadRequest,
-      ErrorsOutputDto(List("Bad Github identifier")),
+      ErrorsOutputDto(List("Github API returned error: Bad Github identifier")),
       ConnectionsServiceMock.get(
         TwitterServiceMock.withResult(following = true, followedBy = true),
         HttpClientMock.withStatusAndBody(Status.BadRequest, """{"message": "Bad Github identifier"}""")
@@ -86,10 +100,12 @@ class DevelopersRoutesTest  extends CatsEffectSuite {
   test("when twitter API returns errors") {
     testDevelopersRoutesResponse(
       Status.BadRequest,
-      ErrorsOutputDto(List(
-        "Bad Twitter identifier dev1",
-        "Bad Twitter identifier dev2",
-      )),
+      ErrorsOutputDto(
+        List(
+          "Bad Twitter identifier dev1",
+          "Bad Twitter identifier dev2"
+        )
+      ),
       ConnectionsServiceMock.get(
         TwitterServiceMock.withErrors(List("Bad Twitter identifier dev1", "Bad Twitter identifier dev2")),
         HttpClientMock.successWith(List(GithubOrganisationDto("companyName", 123)))
@@ -100,11 +116,13 @@ class DevelopersRoutesTest  extends CatsEffectSuite {
   test("when both github and twitter APIs return errors") {
     testDevelopersRoutesResponse(
       Status.BadRequest,
-      ErrorsOutputDto(List(
-        "Bad Twitter identifier dev1",
-        "Bad Twitter identifier dev2",
-        "Bad Github identifier dev1"
-      )),
+      ErrorsOutputDto(
+        List(
+          "Bad Twitter identifier dev1",
+          "Bad Twitter identifier dev2",
+          "Github API returned error: Bad Github identifier dev1"
+        )
+      ),
       ConnectionsServiceMock.get(
         TwitterServiceMock.withErrors(List("Bad Twitter identifier dev1", "Bad Twitter identifier dev2")),
         HttpClientMock.withStatusAndBody(Status.BadRequest, """{"message": "Bad Github identifier dev1"}""")
@@ -135,11 +153,10 @@ class DevelopersRoutesTest  extends CatsEffectSuite {
   }
 
   def testDevelopersRoutesResponse[B: Decoder, A <: B](
-                               expectedStatusCode: Status,
-                               expectedResult: A,
-                               connectionsService: ConnectionsService
-                          ): IO[Unit] = {
-
+      expectedStatusCode: Status,
+      expectedResult: A,
+      connectionsService: ConnectionsService
+  ): IO[Unit] =
     Uri.fromString("/developers/connected/dev1/dev2/") match {
       case Left(_) =>
         fail("Could not generate valid URI!")
@@ -151,19 +168,18 @@ class DevelopersRoutesTest  extends CatsEffectSuite {
         )
         val response = service.orNotFound.run(request)
         val test = for {
-          result <- response
-          body   <- result.as[String]
+          result   <- response
+          body     <- result.as[String]
           jsonBody <- IO.fromEither(decode[B](body))
         } yield (result.status, jsonBody)
         test.assertEquals((expectedStatusCode, expectedResult))
     }
-  }
 
   def testDevelopersRoutesRawResponse(
-                                                        expectedStatusCode: Status,
-                                                        expectedResult: String,
-                                                        connectionsService: ConnectionsService
-                                                      ): IO[Unit] = {
+      expectedStatusCode: Status,
+      expectedResult: String,
+      connectionsService: ConnectionsService
+  ): IO[Unit] =
     Uri.fromString("/developers/connected/dev1/dev2/") match {
       case Left(_) =>
         fail("Could not generate valid URI!")
@@ -180,5 +196,4 @@ class DevelopersRoutesTest  extends CatsEffectSuite {
         } yield (result.status, body)
         test.assertEquals((expectedStatusCode, expectedResult))
     }
-  }
 }

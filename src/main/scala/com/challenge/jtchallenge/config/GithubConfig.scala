@@ -12,6 +12,7 @@ import eu.timepit.refined.auto._
 import eu.timepit.refined.pureconfig._
 import pureconfig._
 import pureconfig.generic.semiauto._
+
 /**
   * Github service configuration.
   *
@@ -26,4 +27,3 @@ object GithubConfig {
   implicit val serviceConfigReader: ConfigReader[GithubConfig] = deriveReader[GithubConfig]
 
 }
-
