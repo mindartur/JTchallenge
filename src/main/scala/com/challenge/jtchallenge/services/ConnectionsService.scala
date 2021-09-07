@@ -16,6 +16,11 @@ import com.challenge.jtchallenge.models.{Developer, Organisation}
 
 
 trait ConnectionsService {
+  /**
+    * @param dev1 - user #1 identifier
+    * @param dev2 - user #2 identifier
+    * @return if users #1 and #2 are connected or list of errors
+    */
   def areConnected(dev1: Developer, dev2: Developer): IO[EitherNel[String, ConnectedOutputDto]]
 }
 
