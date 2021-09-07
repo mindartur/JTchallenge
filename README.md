@@ -16,6 +16,7 @@ To improve:
 * Add datadog tracing
 * Handle compile warnings
 * Add volume to Dockerfile
+* Rewrite Twitter API service to use http4s client (now it is using akka client)
 
 ## Running the service locally
 1) Create an `.env` file using the `.env.template`

@@ -32,7 +32,7 @@ final class TwitterServiceImpl()(implicit cache: Cache[IO, EitherNel[String, Rel
   ): IO[EitherNel[String, Relationship]] = memoizeF(Some(1.hour)) {
     IO
       .fromFuture(
-        IO(
+        IO.blocking(
           restClient.relationshipBetweenUsers(userNameFollowing.value, userName.value)
         )
       )
