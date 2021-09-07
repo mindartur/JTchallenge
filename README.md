@@ -8,18 +8,25 @@ Given a pair of developer handles they are considered connected if:
 
 ## TODO:
 To improve:
-1) Improve test coverage: add unit tests for services (ConnectionService, GitHubService, TwitterService).
-2) Improve error handling on the side of GitHubService and TwitterService. 
-3) Maybe add identifiers validation for the Twitter and GitHub.
-4) Add local cache for GitHubService and TwitterService.
-5) Improve Dockerfile OR use sbt-native-plugin to create and publish docker image OR use sbt-assembly to create a binary
-6) Add datadog tracing
-7) Handle compile warnings
+* Improve test coverage: add unit tests for services (ConnectionService, GitHubService, TwitterService).
+* Improve error handling on the side of GitHubService and TwitterService. 
+* Maybe add identifiers validation for the Twitter and GitHub.
+* Add local cache for GitHubService and TwitterService.
+* Improve Dockerfile OR use sbt-native-plugin to create and publish docker image OR use sbt-assembly to create a binary
+* Add datadog tracing
+* Handle compile warnings
+* Add volume to Dockerfile
 
 ## Running the service locally
 1) Create an `.env` file using the `.env.template`
-2) Build Docker image: `docker build -t jt-challenge .`
-3) Run Docker container: `docker run --env-file .env -p 8080:8080 --network host jt-challenge:latest`
+2) Build Docker image: 
+```bash
+docker build -t jt-challenge .
+ ```
+3) Run Docker container: 
+```bash
+docker run --env-file .env -p 8080:8080 --network host jt-challenge:latest
+```
 
 ## Swagger
 Assess Swagger docs by `http://127.0.0.1:8080/docs/index.html?url=/docs/docs.yaml`.

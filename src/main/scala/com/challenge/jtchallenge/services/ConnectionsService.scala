@@ -8,16 +8,12 @@
 
 package com.challenge.jtchallenge.services
 
-import cats.data.{ EitherNel, EitherT }
+import cats.data.{EitherNel, EitherT}
 import cats.effect.IO
-import cats.syntax.all._
-import com.challenge.jtchallenge.dto.{
-  ConnectedFalseOutputDto,
-  ConnectedOutputDto,
-  ConnectedTrueOutputDto,
-  GithubOrganisationDto
-}
-import com.challenge.jtchallenge.models.{ Developer, Organisation }
+import cats.implicits._
+import com.challenge.jtchallenge.dto.{ConnectedFalseOutputDto, ConnectedOutputDto, ConnectedTrueOutputDto, GithubOrganisationDto}
+import com.challenge.jtchallenge.models.{Developer, Organisation}
+
 
 trait ConnectionsService {
   def areConnected(dev1: Developer, dev2: Developer): IO[EitherNel[String, ConnectedOutputDto]]
@@ -27,6 +23,7 @@ final class ConnectionsServiceImpl(
     val twitterService: TwitterService,
     val gitHubService: GitHubService
 ) extends ConnectionsService {
+
   def areConnected(dev1: Developer, dev2: Developer): IO[EitherNel[String, ConnectedOutputDto]] = {
     val areFollowingEachOtherE = EitherT(areFollowingEachOther(dev1, dev2))
     val commonOrganisationsE   = EitherT(getCommonOrganisations(dev1, dev2))
@@ -35,10 +32,11 @@ final class ConnectionsServiceImpl(
     }(EitherT.accumulatingParallel).value
   }
 
-  def areFollowingEachOther(dev1: Developer, dev2: Developer): IO[EitherNel[String, Boolean]] =
+  def areFollowingEachOther(dev1: Developer, dev2: Developer): IO[EitherNel[String, Boolean]] = {
     EitherT(twitterService.relationshipBetweenUsers(dev1.userName, dev2.userName))
       .map(x => x.relationship.source.following && x.relationship.target.following)
       .value
+  }
 
   def getCommonOrganisations(dev1: Developer, dev2: Developer): IO[EitherNel[String, List[Organisation]]] = {
     val toOrganisation = (gOrg: GithubOrganisationDto) => Organisation(gOrg.login)

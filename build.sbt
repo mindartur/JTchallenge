@@ -46,6 +46,9 @@ lazy val jtchallenge =
         library.refinedCats,
         library.refinedCore,
         library.refinedPureConfig,
+        library.scalacache,
+        library.scalacacheCaffeine,
+        library.scalacacheCirce,
         library.tapirCats,
         library.tapirCirce,
         library.tapirCore,
@@ -87,6 +90,7 @@ lazy val library =
       val pureConfig      = "0.16.0"
       val refined         = "0.9.27"
       val scalaCheck      = "1.15.4"
+      val scalacache      = "1.0.0-M3"
       val tapir           = "0.19.0-M4"
       val twitter4s       = "7.0"
     }
@@ -111,6 +115,9 @@ lazy val library =
     val refinedPureConfig = "eu.timepit"                  %% "refined-pureconfig"       % Version.refined
     val refinedScalaCheck = "eu.timepit"                  %% "refined-scalacheck"       % Version.refined
     val scalaCheck        = "org.scalacheck"              %% "scalacheck"               % Version.scalaCheck
+    val scalacache        = "com.github.cb372"            %% "scalacache-core"          % Version.scalacache
+    val scalacacheCaffeine = "com.github.cb372"           %% "scalacache-caffeine"      % Version.scalacache
+    val scalacacheCirce   = "com.github.cb372"            %% "scalacache-circe"         % Version.scalacache
     val tapirCats         = "com.softwaremill.sttp.tapir" %% "tapir-cats"               % Version.tapir
     val tapirCirce        = "com.softwaremill.sttp.tapir" %% "tapir-json-circe"         % Version.tapir
     val tapirCore         = "com.softwaremill.sttp.tapir" %% "tapir-core"               % Version.tapir

@@ -8,15 +8,19 @@
 
 package com.challenge.jtchallenge
 
-import java.util.concurrent.{ ExecutorService, Executors }
+import cats.data.EitherNel
+
+import java.util.concurrent.{ExecutorService, Executors}
 import cats.effect._
 import cats.implicits._
 import com.typesafe.config._
 import com.challenge.jtchallenge.api._
 import com.challenge.jtchallenge.config._
-import com.challenge.jtchallenge.services.{ ConnectionsServiceImpl, GitHubServiceImpl, TwitterServiceImpl }
+import com.challenge.jtchallenge.dto.GithubOrganisationDto
+import com.challenge.jtchallenge.services.{ConnectionsServiceImpl, GitHubServiceImpl, TwitterServiceImpl}
 import eu.timepit.refined.auto._
-import com.comcast.ip4s.{ Host, Port }
+import com.comcast.ip4s.{Host, Port}
+import com.danielasfregola.twitter4s.entities.Relationship
 import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.ember.server._
@@ -24,14 +28,12 @@ import org.http4s.implicits._
 import org.http4s.server.Router
 import org.slf4j.LoggerFactory
 import pureconfig._
+import scalacache.caffeine.CaffeineCache
 import sttp.tapir.docs.openapi._
 import sttp.tapir.openapi.circe.yaml._
 import sttp.tapir.swagger.http4s.SwaggerHttp4s
 
 object Server extends IOApp {
-  val blockingPool: ExecutorService = Executors.newFixedThreadPool(2)
-//  implicit val runtime1 = cats.effect.unsafe.IORuntime.global
-
   val log = LoggerFactory.getLogger(Server.getClass())
 
   override def run(args: List[String]): IO[ExitCode] = {
@@ -45,9 +47,12 @@ object Server extends IOApp {
       githubConfig <- IO(
         ConfigSource.fromConfig(config).at(GithubConfig.CONFIG_KEY).loadOrThrow[GithubConfig]
       )
-      twitterService <- IO(new TwitterServiceImpl())
+      twitterCache <- CaffeineCache[IO, EitherNel[String, Relationship]]
+      githubCache <-CaffeineCache[IO, EitherNel[String, List[GithubOrganisationDto]]]
+
+      twitterService <- IO(new TwitterServiceImpl()(implicitly(twitterCache)))
       githubService <- httpClientResource.use((httpClient: Client[IO]) =>
-        IO(new GitHubServiceImpl(githubConfig)(implicitly(httpClient)))
+        IO(new GitHubServiceImpl(githubConfig)(implicitly(httpClient), implicitly(githubCache)))
       )
       connectionsService <- IO(new ConnectionsServiceImpl(twitterService, githubService))
       developersRoutes = new DevelopersRoutes(connectionsService)

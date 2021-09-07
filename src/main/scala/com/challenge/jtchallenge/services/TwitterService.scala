@@ -8,24 +8,28 @@
 
 package com.challenge.jtchallenge.services
 
-import cats.data.{ EitherNel, EitherT, NonEmptyList }
+import cats.data.{EitherNel, EitherT, NonEmptyList}
 import cats.effect.IO
 import com.danielasfregola.twitter4s.TwitterRestClient
 import com.challenge.jtchallenge.models.UserName
 import com.danielasfregola.twitter4s.entities.Relationship
-import com.danielasfregola.twitter4s.exceptions.{ Errors, TwitterError, TwitterException }
+import com.danielasfregola.twitter4s.exceptions.{Errors, TwitterError, TwitterException}
+import scalacache.Cache
+import scalacache.memoization.memoizeF
+import scala.concurrent.duration._
+
 
 trait TwitterService {
   def relationshipBetweenUsers(userNameFollowing: UserName, userName: UserName): IO[EitherNel[String, Relationship]]
 }
 
-final class TwitterServiceImpl() extends TwitterService {
+final class TwitterServiceImpl()(implicit cache: Cache[IO, EitherNel[String, Relationship]]) extends TwitterService {
   val restClient: TwitterRestClient = TwitterRestClient()
 
   override def relationshipBetweenUsers(
       userNameFollowing: UserName,
       userName: UserName
-  ): IO[EitherNel[String, Relationship]] =
+  ): IO[EitherNel[String, Relationship]] = memoizeF(Some(1.hour)) {
     IO
       .fromFuture(
         IO(
@@ -45,4 +49,5 @@ final class TwitterServiceImpl() extends TwitterService {
             )
         }
       }
+  }
 }
