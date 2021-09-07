@@ -21,10 +21,4 @@ object GithubOrganisationDto {
   implicit val decoder: Decoder[GithubOrganisationDto] = deriveDecoder[GithubOrganisationDto]
   implicit val encoder: Encoder[GithubOrganisationDto] = deriveEncoder[GithubOrganisationDto]
 
-//  implicit val decoder: Decoder[GithubOrganisationDto] = (c: HCursor) => for {
-//    id <- c.downField("id").as[OrganisationName]
-//  } yield {
-//    new GithubOrganisationDto(id)
-//  }
-
 }

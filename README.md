@@ -12,11 +12,18 @@ To improve:
 2) Improve error handling on the side of GitHubService and TwitterService. 
 3) Maybe add identifiers validation for the Twitter and GitHub.
 4) Add local cache for GitHubService and TwitterService.
+5) Improve Dockerfile OR use sbt-native-plugin to create and publish docker image OR use sbt-assembly to create a binary
+6) Add datadog tracing
 
-## License ##
+## Running the service locally
+1) Create an `.env` file using the `.env.template`
+2) Build Docker image: `docker build -t jt-challenge .`
+3) Run Docker container: `docker run --env-file .env -p 8080:8080 --network host jt-challenge:latest`
 
-This code is licensed under the Mozilla Public License Version 2.0, see the
-[LICENSE](JTchallenge/LICENSEenge/LICENSE) file for details.
+## Swagger
+Assess Swagger docs by `http://127.0.0.1:8080/docs/index.html?url=/docs/docs.yaml`.
+
+(For some reason redirect for `http://127.0.0.1:8080/docs` doesn't always work in Firefox)
 
 ## System requirements ##
 
@@ -54,3 +61,8 @@ Expected JSON:
 
 ## Deployment guide ##
 
+
+## License ##
+
+This code is licensed under the Mozilla Public License Version 2.0, see the
+[LICENSE](JTchallenge/LICENSEenge/LICENSE) file for details.

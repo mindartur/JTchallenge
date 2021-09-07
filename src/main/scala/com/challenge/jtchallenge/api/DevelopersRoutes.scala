@@ -11,7 +11,7 @@ package com.challenge.jtchallenge.api
 import cats.effect.kernel.Async
 import cats.effect.{Concurrent, IO}
 import cats.implicits._
-import com.challenge.jtchallenge.dto.{ConnectedInputDto, ConnectedOutputDto, ConnectedTrueOutputDto, ErrorsOutputDto, ServiceError}
+import com.challenge.jtchallenge.dto.{ConnectedFalseOutputDto, ConnectedInputDto, ConnectedOutputDto, ConnectedTrueOutputDto, ErrorsOutputDto, ServiceError}
 import com.challenge.jtchallenge.models.Developer
 import com.challenge.jtchallenge.services.ConnectionsService
 import org.http4s.HttpRoutes
@@ -48,15 +48,23 @@ object DevelopersRoutes {
   val exampleConnectedTrueOutputDto = ConnectedTrueOutputDto(
     List("org1", "org2")
   )
+  val exampleConnectedFalseOutputDto = ConnectedFalseOutputDto(
+  )
+
+  val exampleErrors = ErrorsOutputDto(List(
+    "dev1 is no a valid user in github",
+    "dev1 is no a valid user in twitter",
+    "dev2 is no a valid user in twitter"
+  ))
 
   val connectedRoute: Endpoint[ConnectedInputDto, ErrorsOutputDto, ConnectedOutputDto, Any] = endpoint.get
     .prependIn(ROOT)
     .in("connected")
     .in(path[NonEmptyString]("dev1").and(path[NonEmptyString]("dev2")).mapTo[ConnectedInputDto])
-    .errorOut(jsonBody[ErrorsOutputDto])
-    .out(jsonBody[ConnectedOutputDto].description("Output JSON").example(exampleConnectedTrueOutputDto))
+    .errorOut(jsonBody[ErrorsOutputDto].description("Array of errors if there are any").example(exampleErrors))
+    .out(jsonBody[ConnectedOutputDto].description("JSON result").example(exampleConnectedTrueOutputDto).example(exampleConnectedFalseOutputDto))
     .description(
-      "Returns a simple JSON object using the provided query parameter 'name' which must not be empty."
+      "Returns whether two “developers” are fully connected or no"
     )
 
 }
