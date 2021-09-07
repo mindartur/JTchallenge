@@ -36,14 +36,12 @@ lazy val jtchallenge =
         library.circeRefined,
         library.circeParser,
         library.enumeratumCirce,
-        library.flywayCore,
         library.github4s,
         library.http4sCirce,
         library.http4sDsl,
         library.http4sEmberClient,
         library.http4sEmberServer,
         library.logback,
-        library.postgresql,
         library.pureConfig,
         library.refinedCats,
         library.refinedCore,
@@ -81,17 +79,14 @@ lazy val library =
       val cats            = "2.6.1"
       val circe           = "0.14.1"
       val enumeratum      = "1.7.0"
-      val flyway          = "7.14.1"
       val github4s        = "0.29.1"
       val http4s          = "0.23.0"
       val logback         = "1.2.5"
       val munit           = "0.7.29"
       val munitCatsEffect = "1.0.5"
-      val postgresql      = "42.2.23"
       val pureConfig      = "0.16.0"
       val refined         = "0.9.27"
       val scalaCheck      = "1.15.4"
-      val tapirOther      = "0.18.3"
       val tapir           = "0.19.0-M4"
       val twitter4s       = "7.0"
     }
@@ -101,7 +96,6 @@ lazy val library =
     val circeRefined      = "io.circe"                    %% "circe-refined"            % Version.circe
     val circeParser       = "io.circe"                    %% "circe-parser"             % Version.circe
     val enumeratumCirce   = "com.beachape"                %% "enumeratum-circe"         % Version.enumeratum
-    val flywayCore        = "org.flywaydb"                %  "flyway-core"              % Version.flyway
     val github4s          = "com.47deg"                   %% "github4s"                 % Version.github4s // exclude("org.http4s", "http4s-circe_2.13") exclude("org.http4s", "http4s-client_2.13")
     val http4sCirce       = "org.http4s"                  %% "http4s-circe"             % Version.http4s
     val http4sDsl         = "org.http4s"                  %% "http4s-dsl"               % Version.http4s
@@ -111,7 +105,6 @@ lazy val library =
     val munit             = "org.scalameta"               %% "munit"                    % Version.munit
     val munitCatsEffect   = "org.typelevel"               %% "munit-cats-effect-3"      % Version.munitCatsEffect
     val munitScalaCheck   = "org.scalameta"               %% "munit-scalacheck"         % Version.munit
-    val postgresql        = "org.postgresql"              %  "postgresql"               % Version.postgresql
     val pureConfig        = "com.github.pureconfig"       %% "pureconfig"               % Version.pureConfig
     val refinedCore       = "eu.timepit"                  %% "refined"                  % Version.refined
     val refinedCats       = "eu.timepit"                  %% "refined-cats"             % Version.refined
